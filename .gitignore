@@ -1,0 +1,55 @@
+# ----- Secrets & local config -----
+.Renviron
+.env
+*.pem
+config/paths.R
+
+# ----- IPUMS / person-level data (NEVER commit) -----
+data/raw/**
+!data/raw/.gitkeep
+!data/raw/README.md
+data/processed/**
+!data/processed/.gitkeep
+*.dat
+*.dat.gz
+cps_*.xml
+cps_*.dat*
+
+# ----- Large / local external downloads (optional to keep local only) -----
+data/external/**
+!data/external/.gitkeep
+!data/external/README.md
+
+# ----- Analysis outputs (regenerate locally) -----
+output/figures/**
+!output/figures/.gitkeep
+output/tables/**
+!output/tables/.gitkeep
+*.xlsx
+!~$*.xlsx
+*.xls
+*.rds
+*.RData
+*.RDataTmp*
+
+# ----- R / Quarto / OS -----
+.Rproj.user/
+.Rhistory
+.Rapp.history
+.Ruserdata
+*_cache/
+/cache/
+*.utf8.md
+*.knit.md
+.DS_Store
+rsconnect/
+.httr-oauth
+
+# ----- HTML renders (optional; uncomment to exclude) -----
+# *.html
+# *_files/
+
+# ----- Editor / AI local -----
+.cursor/
+.claude/
+*.Rproj
