@@ -1,20 +1,33 @@
 ---
-editor: 
-  markdown: 
+title: "Research Analysis & Findings (Working Paper — In Progress)"
+author: "Uday Kumar"
+date: "2026-02-14"
+format:
+  html:
+    theme: journal
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+    code-summary: "Show R Code"
+    embed-resources: true
+execute:
+  echo: true
+  warning: false
+  message: false
+editor:
+  markdown:
     wrap: 72
 ---
 
-------------------------------------------------------------------------
+::: {.callout-important}
+## Working paper status
 
-title: "Research Analysis & Findings" author: "Uday Kumar" date:
-"2026-02-14"
-
-format: html: theme: journal toc: true toc-depth: 3 number-sections:
-true code-fold: true code-summary: "Show R Code" embed-resources: true
-
-execute: echo: true warning: false message: false
-
-------------------------------------------------------------------------
+This Quarto document accompanies an **ongoing** empirical project. Code,
+measurement choices, and narrative explanations are evolving. Do not treat
+figures or rates produced here as finalized findings or causal conclusions.
+See `docs/PROJECT_STATUS.md` and `docs/METHODS_REVIEW.md`.
+:::
 
 ```{r setup}
 knitr::opts_chunk$set(
@@ -1123,7 +1136,10 @@ employed)(entrepreneurship transistion)\
 library(data.table)
 setDT(cps_data)
 
-# Create lagged variables
+# MECHANICAL: chronological order required before shift() (docs/METHODS_REVIEW.md §A)
+setorder(cps_data, cpsidp, year, month)
+
+# Create lagged variables (4-row + MISH check — calendar gap still needs validation)
 cps_data[, `:=`(      # [] -modify dataset , := - create new columns
   prev_classwkr = shift(classwkr, 4, type = "lag"),  #"lag" looks "backward" to pull values 
 #Shift -creates a temp vector of 4th row from the left to compare it to row 5th,:- create col
@@ -1610,13 +1626,14 @@ ggplot(
 
     ```{r entrepreneurship_kauffman_vars, warning=FALSE, message=FALSE}
     # ============================================================================
-    # Build Kauffman 1-month transition variables (required before rate chunk)
+    # VALIDATION IN PROGRESS: Kauffman-style 1-month variables
     # Must run AFTER cps_data is loaded + race is classified + ahrsworkt exists
     # ============================================================================
     library(data.table)
     library(haven)
 
     setDT(cps_data)
+    setorder(cps_data, cpsidp, year, month)  # MECHANICAL: required before shift()
 
     # Needed columns
     need <- c("cpsidp", "classwkr", "mish", "ahrsworkt")
@@ -2113,8 +2130,14 @@ ggplot(
 
     ### Code
 
-```{r hpi_integration, warning=FALSE, message=FALSE}
-
+```{r hpi_integration, warning=FALSE, message=FALSE, eval=FALSE}
+# ----------------------------------------------------------------------------
+# eval=FALSE on purpose (MECHANICAL / documentation safety).
+# This older chunk OVERWRITES cps_df with STATE-AVERAGED county HPI and would
+# replace the hybrid MSA→county→nonmetro merge coded above.
+# REQUIRES RESEARCHER REVIEW before re-enabling (docs/METHODS_REVIEW.md §C).
+# Keep for historical reference only.
+# ----------------------------------------------------------------------------
 
  #Create the cps object #we need to fix this line
 #cps_object <- cps$new()

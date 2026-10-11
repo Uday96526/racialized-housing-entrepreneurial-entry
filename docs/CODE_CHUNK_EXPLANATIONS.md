@@ -2,6 +2,15 @@
 
 **Purpose of this document:** Plain-English explanation of every code chunk in `df_wk.Rmd`, written so that anyone (including a professor or first-time reader) can understand what each piece of code does, why it exists, and what it produces.
 
+> **Working-paper notice:** This narration describes *what the chunks attempt*. It is not a claim that every chunk is validated end-to-end. Where implementation and this text diverge, prefer [`METHODS_REVIEW.md`](METHODS_REVIEW.md) and the code itself. Project stage: [`PROJECT_STATUS.md`](PROJECT_STATUS.md).
+
+**Known corrections to older wording in this file:**
+
+- **Chunk 5 (weights):** Current code often divides by the number of distinct survey months *in the year file* (frequently 12), not necessarily the count of months *each person* appears. Treat “person-month appearance” language below as aspirational until the formula is confirmed.
+- **Chunk 13 (entrepreneurship):** Lags require chronological `setorder` within `cpsidp`. A four-row lag plus a MISH check is **not** automatically a verified calendar four-month interval.
+- **HPI / regressions:** Hybrid local HPI and state-averaged HPI both appear in the notebook; do not assume every regression uses the hybrid series.
+- **Kauffman / “placebo” / residualization:** Label as validation or exploratory until certified.
+
 ---
 
 ## Chunk 1 — libraries | functions

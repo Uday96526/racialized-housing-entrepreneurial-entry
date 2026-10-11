@@ -710,7 +710,12 @@ ggplot(education_trends_weighted, aes(x = year, y = Percentage_Weighted, color =
 library(data.table)
 setDT(cps_data)
 
-# Create lagged variables
+# MECHANICAL: row-lags require chronological order within person.
+# REQUIRES VALIDATION: confirm calendar gaps after sorting (see docs/METHODS_REVIEW.md §A).
+# This does not change the intended entrepreneurship definition; it makes shift() match that intent.
+setorder(cps_data, cpsidp, year, month)
+
+# Create lagged variables (4-row lag + MISH check — not automatically a verified calendar 4-month gap)
 cps_data[, `:=`(
   prev_classwkr = shift(classwkr, 4, type = "lag"),
   prev_mish = shift(mish, 4, type = "lag")
@@ -737,10 +742,10 @@ cps_data[, entrepreneurship2 := as.integer(
 )]
 
 # ============================================================================
-# KAUFFMAN REPLICATION VARIABLES (1-month matching, all SE types)
-# Do NOT use these for the main paper — only for Kauffman validation
+# VALIDATION IN PROGRESS: Kauffman-style 1-month variables (not primary paper DV)
+# Do NOT treat numerical agreement with published tables as confirmed until checked.
 # ============================================================================
-# 1-month lag variables (Kauffman uses consecutive-month transitions)
+# 1-month lag variables (requires setorder above)
 cps_data[, `:=`(
   prev_classwkr_1m = shift(classwkr, 1, type = "lag"),
   prev_mish_1m     = shift(mish,     1, type = "lag")
@@ -1013,7 +1018,10 @@ drop_cols <- intersect(
 )
 if (length(drop_cols) > 0) cps_data[, (drop_cols) := NULL]
 
-# 1-month lags within person
+# MECHANICAL: ensure chronological order before shift (see METHODS_REVIEW §A)
+setorder(cps_data, cpsidp, year, month)
+
+# 1-month lags within person (VALIDATION IN PROGRESS vs published Kauffman rates)
 cps_data[, `:=`(
   prev_classwkr_1m = shift(classwkr, 1L, type = "lag"),
   prev_mish_1m     = shift(mish,     1L, type = "lag")
@@ -1567,7 +1575,10 @@ cps_df <- cps_data #run this line
 
 ```{r hpi_integration, warning=FALSE, message=FALSE}
 # ============================================================================
-# HYBRID HPI: MSA → County → State Nonmetro
+# CANDIDATE SPECIFICATION: HYBRID HPI (MSA → County → State Nonmetro)
+# Coverage rules and nonmetro fallback eligibility still REQUIRE RESEARCHER REVIEW
+# (docs/METHODS_REVIEW.md §C–D). Downstream regression chunks may use a different
+# (state-averaged) exposure — do not assume this object is what every lm() uses.
 # ============================================================================
 library(dplyr)
 library(readxl)
@@ -1721,11 +1732,15 @@ cat("Total rows with HPI:", nrow(cps_df), "\n")
 
 ```{r fairlie_unanticipated_hpi, warning=FALSE, message=FALSE}
 # ============================================================================
-# STEP 2: Fairlie-style unanticipated HPI (first-stage residualization)
+# EXPLORATORY: Fairlie-style unanticipated HPI (first-stage residualization)
+# VALIDATION IN PROGRESS — residualization is not automatically IV / 2SLS.
+# Confirm whether residuals are used in the preferred entrepreneurship model
+# (docs/METHODS_REVIEW.md §G) before treating this as a primary design.
+#
 # Main:   1-year geo×year residual
 # Robust: 4-year cumulative residual
 #
-# First-stage controls:
+# First-stage controls (as coded):
 #   - lag HPI change
 #   - place demographics (CPS)
 #   - place unemployment change (CPS EMPSTAT)
@@ -2497,13 +2512,18 @@ library(lmtest)
 library(writexl)
 
 # ============================================================================
-# STEP 1: Load Actual HPI from Excel
+# CANDIDATE SPECIFICATION / REQUIRES RESEARCHER REVIEW
+# This block builds STATE-AVERAGED HPI from the county FHFA file and uses it in
+# Models 1–4 below. It is NOT the same object as hybrid hpi_final
+# (MSA → county → nonmetro). Do not interpret these lms as hybrid-local HPI
+# results until the primary exposure is decided (docs/METHODS_REVIEW.md §C).
+# EXPLORATORY relative to the hybrid merge coded earlier in this notebook.
 # ============================================================================
 
 hpi_file_path <- PATH_COUNTY
 hpi_df_source <- read_excel(hpi_file_path, skip = 5, .name_repair = "minimal")
 
-# Compute actual state-level HPI
+# State-level mean of county HPI (candidate exposure — not hybrid local HPI)
 actual_state_hpi_reg <- hpi_df_source %>%
   filter(!is.na(State) & !is.na(Year) & !is.na(HPI)) %>%
   group_by(State, Year) %>%
@@ -2548,10 +2568,9 @@ df_reg2 <- cps_df %>%
                                NA, as.numeric(earnweek2)),
     yearly_earnings = ifelse(is.na(earnweek2_cleaned), 0, earnweek2_cleaned * 52),
     earnings_missing = factor(ifelse(is.na(earnweek2_cleaned), 1, 0)),
-    # Scale HPI by 10 for interpretable coefficients
+    # Scale HPI by 10 for interpretable coefficients (state-averaged series above)
     hpi10 = actual_hpi / 10,
-    WEIGHT = wtfinl_annual, 
-                  
+    WEIGHT = wtfinl_annual
   ) %>%
   filter(!is.na(WEIGHT) & WEIGHT > 0,
          !is.na(entrepreneurship2),
@@ -2789,10 +2808,10 @@ df_reg_placebo <- cps_df %>%
                                NA, as.numeric(earnweek2)),
     yearly_earnings = ifelse(is.na(earnweek2_cleaned), 0, earnweek2_cleaned * 52),
     earnings_missing = factor(ifelse(is.na(earnweek2_cleaned), 1, 0)),
-    # Use HPI CHANGE (scaled by 10) instead of level
+    # HPI CHANGE (scaled by 10); geography depends on how actual_hpi_change_pct was built
     hpi_change10 = actual_hpi_change_pct / 10,
-    WEIGHT = ifelse(exists("wtfinl_annual") && !is.na(wtfinl_annual), 
-                   wtfinl_annual, wtfinl)
+    # MECHANICAL FIX: exists() checks the environment, not columns; prefer coalesce
+    WEIGHT = dplyr::coalesce(wtfinl_annual, wtfinl)
   ) %>%
   filter(!is.na(WEIGHT) & WEIGHT > 0,
          !is.na(entrepreneurship2),
@@ -2802,10 +2821,13 @@ df_reg_placebo <- cps_df %>%
          !is.na(children_present), !is.na(homeowner), !is.na(education))
 
 # Create subsamples: Homeowners (hhtenure == 1) and Renters (hhtenure == 2 ONLY)
+# NOTE: Often labeled "placebo" in comments; scientifically this is a tenure
+# heterogeneity / falsification split — not proof that the two slopes differ
+# (see docs/METHODS_REVIEW.md §F). REQUIRES RESEARCHER REVIEW of naming + tests.
 df_homeowners <- df_reg_placebo %>% filter(homeowner == "1")
 df_renters <- df_reg_placebo %>% filter(renter == "1")  # Only hhtenure == 2
 
-cat("=== PLACEBO TEST SAMPLE SIZES (IMPROVED) ===\n")
+cat("=== TENURE-SPLIT SAMPLE SIZES (labeled placebo in older notes) ===\n")
 cat("Homeowners (hhtenure == 1) - N:", nrow(df_homeowners), "\n")
 cat("Homeowners - Entrepreneurship2==1:", sum(df_homeowners$entrepreneurship2 == 1), "\n")
 cat("Renters (hhtenure == 2 ONLY) - N:", nrow(df_renters), "\n")
@@ -3227,6 +3249,9 @@ cat("5. Matching strategy: FIPS (primary) -> County Name + State (backup) -> Sta
 
 
 ```{r hpi_integration_county_level_only, warning=FALSE, message=FALSE}
+# EXPLORATORY / DIAGNOSTIC: county-only HPI. If run after the hybrid merge, this
+# can replace hpi_final columns. Prefer a separate object before treating as main.
+# REQUIRES RESEARCHER REVIEW before using as primary exposure.
 
 # Use HPI data already loaded - work with existing column names directly
 # Find column indices (safer than renaming)
