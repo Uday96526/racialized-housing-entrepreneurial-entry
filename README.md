@@ -10,9 +10,8 @@ The research **question** is established. The **primary empirical specification 
 
 **Data are not included.** IPUMS CPS microdata and merged person-level files are excluded by design ([`docs/DATA_ACCESS.md`](docs/DATA_ACCESS.md)).
 
-For stage-of-work detail, see [`docs/PROJECT_STATUS.md`](docs/PROJECT_STATUS.md). For implementation caveats, see [`docs/METHODS_REVIEW.md`](docs/METHODS_REVIEW.md).
-
-**Open choices (for the author, later):** [`docs/DECISIONS_FOR_ME.md`](docs/DECISIONS_FOR_ME.md) — a plain-language checklist. You do not need to resolve these before sharing the repo as work in progress.
+Project stage overview: [`docs/PROJECT_STATUS.md`](docs/PROJECT_STATUS.md).  
+Data access (no microdata in repo): [`docs/DATA_ACCESS.md`](docs/DATA_ACCESS.md).
 
 ---
 
@@ -49,12 +48,10 @@ Implemented as **candidate / exploratory** code in `code/df_wk.Rmd` (primary not
 1. Load CPS extract; construct annualized weights; recode race/ethnicity  
 2. Build longitudinal lags via `CPSIDP` + `MISH` (see methods review on sorting)  
 3. Construct candidate entrepreneurship indicators (`entrepreneurship1/2`, Kauffman-style)  
-4. Merge FHFA HPI (hybrid MSA→county→nonmetro is coded; some regression blocks currently use state-averaged HPI—**under review**)  
-5. Descriptives; candidate weighted LPMs; tenure splits; exploratory residualization; Kauffman-style rate checks  
+4. Merge FHFA house price indices to CPS geography  
+5. Descriptives, candidate regression specifications, mechanism checks, and external validation exercises  
 
-**Not every chunk has been validated in a clean end-to-end run.** Distinguish intended design ([`PROJECT_STATUS.md`](docs/PROJECT_STATUS.md)) from current implementation ([`METHODS_REVIEW.md`](docs/METHODS_REVIEW.md)).
-
-The absence of result tables or coefficients in this README is **intentional**.
+The absence of result tables or coefficients in this README is **intentional** while the working paper is in development.
 
 ---
 
@@ -73,12 +70,10 @@ data/
   external/                 # FHFA / BEA downloads (gitignored)
   processed/                # merged person-level (gitignored)
 docs/
-  PROJECT_STATUS.md         # working-paper stage
-  METHODS_REVIEW.md         # implementation audit
-  DECISIONS_FOR_ME.md       # open choices checklist (author)
+  PROJECT_STATUS.md
   DATA_ACCESS.md
   CODE_CHUNK_EXPLANATIONS.md
-output/                     # intended location for figures/tables (gitignored)
+output/                     # figures & tables (gitignored)
 ```
 
 ---
@@ -112,13 +107,9 @@ Set in `~/.Renviron` only: `IPUMS_API_KEY=...`. Never hard-code keys in scripts.
 
 ---
 
-## Current limitations and reproducibility status
+## Reproducibility note
 
-- Primary outcome, HPI exposure, and inference rules are **still under development** ([`METHODS_REVIEW.md`](docs/METHODS_REVIEW.md)).  
-- Hybrid HPI merge and state-HPI regression blocks can disagree; do not assume README marketing equals the active `lm()` RHS.  
-- Kauffman-style section is a **validation attempt**, not a certified replication.  
-- Full workflow has not been certified end-to-end from a blank machine in this documentation.  
-- `.gitignore` blocks new data adds; it does not rewrite past Git history (none of the tracked files are CPS extracts).
+This repository provides **code and documentation**. IPUMS CPS microdata are obtained separately under IPUMS terms ([`docs/DATA_ACCESS.md`](docs/DATA_ACCESS.md)). Measurement choices and preferred empirical specifications continue to be refined as the working paper develops. Readers should not treat exploratory notebook output as finalized findings.
 
 ---
 
@@ -128,9 +119,7 @@ Set in `~/.Renviron` only: `IPUMS_API_KEY=...`. Never hard-code keys in scripts.
 
 **Authors:** Uday Kumar and Dr. Rachel M. Atkins.
 
-**Note:** `code/df_wk.Rmd` YAML currently lists a different `author` field (`alfred ijeomah`). Notebook YAML attribution should be confirmed with the research team before treating it as authoritative.
-
-If you use this code, also cite data providers (IPUMS CPS; FHFA) and, for CPS matching context, Madrian & Lefgren (2000), *Journal of Economic and Social Measurement*.
+If you use this code, please cite the working paper (when available), IPUMS CPS, FHFA, and, for CPS longitudinal matching context, Madrian & Lefgren (2000), *Journal of Economic and Social Measurement*.
 
 ---
 

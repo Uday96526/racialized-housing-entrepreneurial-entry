@@ -53,38 +53,28 @@ Described as *present in code*, not as *validated*:
 6. **Candidate regressions** — weighted LPMs with race × HPI interactions, controls, state and year FE, HC1 robust SE (and state clustering in tenure-split code).
 7. **Tenure comparisons** — separate homeowner vs renter regressions (often labeled “placebo” in code comments; see methods review).
 8. **Kauffman-style validation attempts** — annual average monthly entry rates vs published benchmarks.
-9. **Exploratory HPI residualization** — geo×year first-stage residualization of HPI change (Fairlie-style); use in outcome models is incomplete / under review.
+9. **Exploratory HPI residualization** — candidate first-stage residualization of HPI change for later robustness work.
 
-See [`METHODS_REVIEW.md`](METHODS_REVIEW.md) for discrepancies between intent and implementation.
+Detailed author-facing notes on open choices are kept in [`DECISIONS_FOR_ME.md`](DECISIONS_FOR_ME.md) (working checklist, not a public findings claim).
 
 ---
 
-## Current limitations
+## Development status (public summary)
 
-Items that require confirmation before treating results as paper-ready:
+The project is an **active working paper**. Core data construction and candidate analyses are implemented in code. Preferred measurement definitions, geographic HPI exposure, and final regression tables are still being refined before journal submission. That is normal for empirical work at this stage.
 
-- Primary transition window (MIS-based 4-step lag vs verified calendar months).
-- Coding of non-matches as `0` vs `NA` and the at-risk denominator for main outcomes.
-- Primary HPI exposure: hybrid local series vs state-averaged HPI levels/changes used in some regression blocks.
-- Geographic match quality (CBSA padding, nonmetro fallback eligibility, missingness by race).
-- Weight construction (`wtfinl / months_in_year` definition) and placebo-chunk weight selection bug (see methods review).
-- Inference: HC1 vs clustering at the geography of HPI variation; rare-events / logit AME robustness.
-- Whether residualized HPI enters the preferred outcome model (and under what interpretation).
+This repository is meant to show an organized, ongoing research pipeline—not a claim that every specification is locked.
 
 ---
 
 ## Interpretation
 
-Preliminary plots, Excel dumps, and coefficients produced while exploring the code **must not** be interpreted as evidence of causal effects of house prices on entrepreneurship, nor as peer-reviewed findings.
-
-Where code comments say “placebo,” “replication,” or “2SLS,” treat those labels as **aspirational or exploratory** until the corresponding validation is complete and documented.
+Notebook output and exploratory tables should be read as **preliminary**. They are not peer-reviewed findings and should not be interpreted as established causal effects.
 
 ---
 
-## Reproducibility status
+## Reproducibility
 
-**Required for any independent run:** authorized IPUMS CPS extract; FHFA HPI files; local `config/paths.R`; R packages listed in the README.
+**To run the code:** obtain an authorized IPUMS CPS extract and FHFA files, configure `config/paths.R`, and install packages listed in the README ([`DATA_ACCESS.md`](DATA_ACCESS.md)).
 
-**Not yet claimed:** locked package versions (`renv`); certified end-to-end knit; successful Kauffman numerical match within a stated tolerance; finalized primary specification.
-
-A future replication package should include: locked environment, explicit analysis sample rules, a single canonical analysis script path, and aggregate (non-person) verified outputs.
+A fuller replication package (locked environment, finalized primary specification, verified aggregate outputs) will be prepared as the paper approaches submission.

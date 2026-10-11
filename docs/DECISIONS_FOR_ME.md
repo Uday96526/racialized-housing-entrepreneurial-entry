@@ -1,27 +1,25 @@
-# Decisions for me (fill in later — no rush)
+# Decisions for me (private working checklist — fill in later)
 
-**Purpose:** Walk through the open research choices one by one.  
+**Purpose:** Walk through open research choices one by one, in plain language.  
 **You do not need to decide everything today.**  
 **When ready:** write your choice under each item (or tell Cursor in chat), then we implement only what you approve.
 
-**Related docs:** [`PROJECT_STATUS.md`](PROJECT_STATUS.md) (what the project is) · [`METHODS_REVIEW.md`](METHODS_REVIEW.md) (technical detail)
+This file is for **you** (and collaborators). It is intentionally more detailed than the public README. Outsiders should see “working paper in progress,” not a list of unresolved technical doubts.
+
+**Related:** [`PROJECT_STATUS.md`](PROJECT_STATUS.md) · [`METHODS_REVIEW.md`](METHODS_REVIEW.md)
 
 ---
 
-## Is the repo OK to show people now?
+## Public vs this checklist
 
-**Yes — as a working project**, once the updated README is on GitHub.
+| Show publicly | Keep here (decide later) |
+|---------------|--------------------------|
+| Working paper in progress | Exact HPI primary series |
+| Research question / motivation | 0 vs NA / at-risk rules |
+| Code + data-access rules | Clustering / logit AME menu |
+| No microdata; no final results | Residualized HPI role, etc. |
 
-It already says (once pushed):
-
-- Working paper in progress  
-- No finalized findings / not causal claims  
-- Code and docs only (no CPS microdata)  
-- Specs still evolving  
-
-That is the right signal for professors, supervisors, or applications: *serious ongoing research*, not a finished paper.
-
-You can take your time on the decisions below. Showing the repo does **not** require locking the primary model first.
+Showing the repo as active work does **not** require locking the items below first.
 
 ---
 

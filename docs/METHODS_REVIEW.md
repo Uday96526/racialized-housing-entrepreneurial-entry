@@ -1,8 +1,13 @@
-# Methods review — implementation audit (working paper)
+# Methods review — internal implementation notes
 
-**Scope:** Code as of the public repository snapshot in `code/df_wk.Rmd` and `code/Explanation.qmd`.  
-**Purpose:** Document discrepancies between what the code *does*, what docs *claim*, and what still needs researcher decisions.  
+**Audience:** Research team / author checklist (technical).  
+**Not** a public “limitations of the paper” section — see README and `PROJECT_STATUS.md` for the outward-facing status.
+
+**Scope:** Code in `code/df_wk.Rmd` and `code/Explanation.qmd`.  
+**Purpose:** Track implementation details and open choices while the working paper develops.  
 **Rule:** Presence of code ≠ validation. No coefficients or findings are reported here.
+
+For a plain-language decision checklist, use [`DECISIONS_FOR_ME.md`](DECISIONS_FOR_ME.md).
 
 Severity: **CRITICAL** / **HIGH** / **MEDIUM** / **LOW**  
 Type: **Mechanical** (implementation) vs **Scientific** (design choice requiring approval)
