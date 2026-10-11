@@ -74,4 +74,4 @@ Code in this repository is provided for academic replication. Data remain subjec
 
 ## Author
 
-Uday Kumar
+Uday Kumar and Dr. Rachel M. Atkins
