@@ -30,14 +30,11 @@ Person-level merged CPS–HPI analysis files are created locally and must not be
 
 ## Current stage
 
-The codebase is under **active development**. As of the latest documentation pass:
+The codebase is under **active development**. In broad terms:
 
-- Descriptive pipeline (race coding, industry mapping, education bins, tenure) is largely implemented.
-- Candidate entrepreneurship outcomes and HPI merges exist in code.
-- Candidate weighted LPM specifications (race, HPI, interactions, controls, FE) exist.
-- Tenure split regressions, Kauffman-style rate comparisons, and exploratory HPI residualization exist as **candidate / exploratory** modules.
-- Primary outcome definition, primary HPI exposure (local hybrid vs state aggregate), inference (clustering), and identification strategy remain **open research decisions**.
-- A full clean, end-to-end knit of every chunk on a fresh machine with a fresh extract has **not** been certified in this repository documentation.
+- Data preparation, outcome construction, and HPI merging are implemented.
+- Descriptive analyses and candidate regression / robustness modules are in place.
+- Preferred tables and final specification choices continue to be refined for the working paper.
 
 ---
 
@@ -49,11 +46,11 @@ Described as *present in code*, not as *validated*:
 2. **Longitudinal linking** — person ID `CPSIDP` with `data.table::shift()` lags by month-in-sample (`MISH`).
 3. **Entrepreneurship outcomes** — `entrepreneurship1` (to unincorporated), `entrepreneurship2` (to incorporated), `entrepreneurship_kauffman` (1-month, both SE types, hours filter).
 4. **Descriptive / weighted summaries** — rates and charts by race, tenure, industry, earnings.
-5. **HPI merging** — candidate hybrid MSA → county → state-nonmetro coalesce; also separate state-averaged county-HPI constructions used in some regression chunks.
-6. **Candidate regressions** — weighted LPMs with race × HPI interactions, controls, state and year FE, HC1 robust SE (and state clustering in tenure-split code).
-7. **Tenure comparisons** — separate homeowner vs renter regressions (often labeled “placebo” in code comments; see methods review).
-8. **Kauffman-style validation attempts** — annual average monthly entry rates vs published benchmarks.
-9. **Exploratory HPI residualization** — candidate first-stage residualization of HPI change for later robustness work.
+5. **HPI merging** — geographic house-price attachment to CPS records.
+6. **Candidate regressions** — race, HPI, interactions, controls, and fixed effects.
+7. **Tenure comparisons** — homeowner vs renter samples (mechanism / heterogeneity checks).
+8. **External validation exercises** — Kauffman-style entry-rate comparisons.
+9. **Additional robustness modules** — including exploratory HPI residualization.
 
 Detailed author-facing notes on open choices are kept in [`DECISIONS_FOR_ME.md`](DECISIONS_FOR_ME.md) (working checklist, not a public findings claim).
 
